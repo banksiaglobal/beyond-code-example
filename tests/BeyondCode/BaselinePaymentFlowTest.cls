@@ -16,7 +16,7 @@ Method TestOrderCanBeCreated()
 Method TestUnpaidOrderCanBePaid()
 {
     do $$$AssertTrue(##class(BeyondCode.PaymentService).CreateOrder(2599, .order, .error), error)
-    do $$$AssertTrue(##class(BeyondCode.PaymentService).PayOrder(order.id, .result, .error), error)
+    do $$$AssertTrue(##class(BeyondCode.PaymentService).PayOrder(order.id, "attempt_baseline", .result, .error), error)
     do $$$AssertEquals("succeeded", result.payment.status)
     do $$$AssertEquals("paid", result.order.status)
 }
@@ -28,6 +28,7 @@ Method TestSuccessfulConfirmationMakesOrderPaid()
     set payment = ##class(BeyondCode.PaymentRecord).%New()
     set payment.Order = orderObject
     set payment.Amount = orderObject.Amount
+    set payment.AttemptKey = "attempt_confirmation"
     set payment.Status = "accepted"
     set payment.ProviderPaymentId = "pay_test_confirmation"
     do $$$AssertStatusOK(payment.%Save())
@@ -41,8 +42,8 @@ Method TestSuccessfulConfirmationMakesOrderPaid()
 Method TestAlreadyPaidOrderCannotBePaidAgain()
 {
     do $$$AssertTrue(##class(BeyondCode.PaymentService).CreateOrder(2599, .order, .error), error)
-    do $$$AssertTrue(##class(BeyondCode.PaymentService).PayOrder(order.id, .firstResult, .error), error)
-    do $$$AssertFalse(##class(BeyondCode.PaymentService).PayOrder(order.id, .secondResult, .secondError))
+    do $$$AssertTrue(##class(BeyondCode.PaymentService).PayOrder(order.id, "attempt_paid", .firstResult, .error), error)
+    do $$$AssertFalse(##class(BeyondCode.PaymentService).PayOrder(order.id, "attempt_after_paid", .secondResult, .secondError))
     do $$$AssertEquals("order is already paid", secondError)
 
     set rows = ##class(%SQL.Statement).%ExecDirect(, "SELECT COUNT(*) AS PaymentCount FROM BeyondCode.PaymentRecord WHERE Order = ?", order.id)

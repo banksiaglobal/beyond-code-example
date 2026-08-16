@@ -17,3 +17,12 @@
 - **Consequence for knowledge:** Payment attempt and successful payment must remain distinct concepts. The earlier one-attempt framing must not be treated as a business rule.
 - **Implementation boundary:** No application behaviour changed and no enforcement mechanism was selected in this task.
 - **Related knowledge:** [Business rules](../meaning/business-rules.md) and [order lifecycle](../structure/order-lifecycle.md).
+
+## 2026-08-16 — implementation response in 0.2.0
+
+- **Resolution design:** A retry of the same payment attempt reuses its stable `AttemptKey`, so the local attempt and simulator reuse the existing provider-side charge.
+- **Preserved distinction:** A different key starts a different legitimate attempt; the fix does not impose one attempt per order.
+- **Invariant protection:** Successful confirmation still moves the order to `paid`, and the represented sequential flow rejects another successful payment for that order.
+- **Regression evidence:** [Duplicate payment incident test](../../tests/BeyondCode/DuplicatePaymentIncidentTest.cls) now describes one charge across an ambiguous timeout and same-key retry.
+- **Limitations:** The ObjectScript source was reviewed but not compiled or executed in this repository task. Concurrent processing, reconciliation, and webhook deduplication remain outside the example.
+- **Related release:** [0.2.0 payment retry identity](../../releases/0.2.0.md)

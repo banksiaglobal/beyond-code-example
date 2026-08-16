@@ -29,8 +29,10 @@ ClassMethod GetOrder(orderId As %String) As %Status
 
 ClassMethod PayOrder(orderId As %String) As %Status
 {
-    if '##class(BeyondCode.PaymentService).PayOrder(orderId, .result, .error) {
-        set status = $select(error="order not found":404, error="order is already paid":409, 1:500)
+    set payload = ..ReadJSON()
+    if '$isobject(payload) quit ..WriteError(400, "valid JSON is required")
+    if '##class(BeyondCode.PaymentService).PayOrder(orderId, payload.attempt_key, .result, .error) {
+        set status = $select(error="order not found":404, error="attempt key is required":400, error="order is already paid":409, error="attempt key belongs to another order":409, 1:500)
         quit ..WriteError(status, error)
     }
     quit ..WriteJSON(201, result)

@@ -32,3 +32,11 @@ The source and test scenario were reviewed. The ObjectScript was not compiled an
 - Can an order legitimately have several payment attempts?
 - Is the real invariant one attempt, one accepted provider charge, or one successful charge?
 - Who decides whether retry after an ambiguous timeout is allowed?
+
+## Resolution in 0.2.0
+
+The human correction established that an order may have several payment attempts but must not have more than one successful payment. That knowledge drove a narrow implementation response: each attempt now has a stable `AttemptKey`, is persisted before provider invocation, and is sent to the simulator with the same identity.
+
+Retrying the same attempt reuses its existing local record and provider-side charge. A different key remains a different legitimate attempt while the order is unpaid. The updated [incident regression test](../tests/BeyondCode/DuplicatePaymentIncidentTest.cls) represents the original ambiguous timeout followed by a successful same-key retry with only one provider-side charge.
+
+The changed ObjectScript and test source were reviewed, but they were not compiled or executed. The resolution covers the represented sequential simulator flow, not concurrent processing, real-provider reconciliation, or webhook deduplication.
