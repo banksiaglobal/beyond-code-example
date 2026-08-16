@@ -20,14 +20,12 @@ Verification in one environment does not prove behavior in another. When relevan
 
 ## Entries
 
-<!-- Copy the block below for each significant piece of evidence. -->
+### 2026-08-16 — baseline payment flow
 
-### YYYY-MM-DD — short title
-
-- **Question:** Not specified yet.
-- **Source or verification:** Not specified yet.
-- **Context or environment:** Not specified yet.
-- **Observation:** Not documented yet.
-- **Conclusion:** Not reached yet.
-- **Limitations:** Not documented yet.
-- **Related knowledge:** None yet.
+- **Question:** Does the first implementation support order creation, normal successful payment, provider confirmation, and paid-order protection?
+- **Source or verification:** The task requirements and review of the ObjectScript source, focused test source, business description, and knowledge files in this change.
+- **Context or environment:** Source review in the LOCAL checkout; no IRIS runtime verification was performed.
+- **Observation:** The source represents the required routes, separate persistent order and payment records, normal gateway confirmation, and paid-order protection. A focused `%UnitTest` scenario documents the intended baseline checks, but it was not executed.
+- **Conclusion:** The change establishes the IRIS source baseline and its associated durable knowledge. Runtime behaviour is not claimed as verified.
+- **Limitations:** Only normal payment-provider behaviour is in scope. Timeouts, retries, delayed events, duplicate events, and out-of-order events have not been tested or claimed to be safe.
+- **Related knowledge:** [Business rules](../BUSINESS.md#rules-and-constraints), [system flow](structure.md#flows-and-interactions), and [behaviour meaning](meaning.md#business-rules).
