@@ -5,9 +5,13 @@ Property Order As BeyondCode.OrderRecord [ Required ];
 
 Property Amount As %Integer [ Required ];
 
-Property Status As %String(VALUELIST = ",accepted,succeeded") [ Required ];
+Property AttemptKey As %String(128) [ Required ];
 
-Property ProviderPaymentId As %String [ Required ];
+Property Status As %String(VALUELIST = ",pending,accepted,succeeded") [ Required ];
+
+Property ProviderPaymentId As %String;
+
+Index AttemptKeyIndex On AttemptKey [ Unique ];
 
 Index ProviderPaymentIdIndex On ProviderPaymentId;
 

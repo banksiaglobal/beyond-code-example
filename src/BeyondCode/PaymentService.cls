@@ -32,10 +32,15 @@ ClassMethod GetOrder(pOrderId, Output pOrder As %DynamicObject) As %Boolean
     quit 1
 }
 
-ClassMethod PayOrder(pOrderId, Output pResult As %DynamicObject, Output pError As %String) As %Boolean
+ClassMethod PayOrder(pOrderId, pAttemptKey As %String, Output pResult As %DynamicObject, Output pError As %String) As %Boolean
 {
     set pResult = ""
     set pError = ""
+    if pAttemptKey = "" {
+        set pError = "attempt key is required"
+        quit 0
+    }
+
     set order = ##class(BeyondCode.OrderRecord).%OpenId(pOrderId)
     if '$isobject(order) {
         set pError = "order not found"
@@ -46,17 +51,43 @@ ClassMethod PayOrder(pOrderId, Output pResult As %DynamicObject, Output pError A
         quit 0
     }
 
-    set charge = ##class(BeyondCode.PaymentGatewaySimulator).RequestCharge(order.%Id(), order.Amount)
+    set result = ##class(%SQL.Statement).%ExecDirect(, "SELECT TOP 1 ID FROM BeyondCode.PaymentRecord WHERE AttemptKey = ?", pAttemptKey)
+    if (result.%SQLCODE < 0) {
+        set pError = result.%Message
+        quit 0
+    }
+
+    if result.%Next() {
+        set payment = ##class(BeyondCode.PaymentRecord).%OpenId(result.%Get("ID"))
+        if payment.Order.%Id() '= order.%Id() {
+            set pError = "attempt key belongs to another order"
+            quit 0
+        }
+    } else {
+        set payment = ##class(BeyondCode.PaymentRecord).%New()
+        set payment.Order = order
+        set payment.Amount = order.Amount
+        set payment.AttemptKey = pAttemptKey
+        set payment.Status = "pending"
+        set sc = payment.%Save()
+        if $$$ISERR(sc) {
+            set pError = $system.Status.GetErrorText(sc)
+            quit 0
+        }
+    }
+
+    set charge = ##class(BeyondCode.PaymentGatewaySimulator).RequestCharge(order.%Id(), order.Amount, pAttemptKey)
+    if charge.status = "error" {
+        set pError = charge.error
+        quit 0
+    }
     if charge.status = "timeout" {
         set pError = charge.error
         quit 0
     }
 
-    set payment = ##class(BeyondCode.PaymentRecord).%New()
-    set payment.Order = order
-    set payment.Amount = order.Amount
-    set payment.Status = charge.status
     set payment.ProviderPaymentId = charge.provider_payment_id
+    set payment.Status = charge.status
     set sc = payment.%Save()
     if $$$ISERR(sc) {
         set pError = $system.Status.GetErrorText(sc)
@@ -66,7 +97,8 @@ ClassMethod PayOrder(pOrderId, Output pResult As %DynamicObject, Output pError A
     if '..ConfirmPayment(charge.confirmation.provider_payment_id, charge.confirmation.status, .confirmedPayment, .pError) quit 0
 
     set pResult = {}
-    set pResult.order = ..OrderJSON(order)
+    do ..GetOrder(order.%Id(), .updatedOrder)
+    set pResult.order = updatedOrder
     set pResult.payment = confirmedPayment
     quit 1
 }
@@ -91,6 +123,22 @@ ClassMethod ConfirmPayment(pProviderPaymentId As %String, pStatus As %String, Ou
     }
 
     set payment = ##class(BeyondCode.PaymentRecord).%OpenId(result.%Get("ID"))
+    if payment.Status = "succeeded" {
+        set pPayment = ..PaymentJSON(payment)
+        quit 1
+    }
+
+    set successfulPayments = ##class(%SQL.Statement).%ExecDirect(, "SELECT COUNT(*) AS PaymentCount FROM BeyondCode.PaymentRecord WHERE Order = ? AND Status = 'succeeded' AND ID <> ?", payment.Order.%Id(), payment.%Id())
+    if (successfulPayments.%SQLCODE < 0) {
+        set pError = successfulPayments.%Message
+        quit 0
+    }
+    do successfulPayments.%Next()
+    if (payment.Order.Status = "paid") || (successfulPayments.%Get("PaymentCount") > 0) {
+        set pError = "order already has a successful payment"
+        quit 0
+    }
+
     set payment.Status = "succeeded"
     set payment.Order.Status = "paid"
     set sc = payment.%Save()
@@ -105,6 +153,7 @@ ClassMethod ConfirmPayment(pProviderPaymentId As %String, pStatus As %String, Ou
 
 ClassMethod Reset() As %Status
 {
+    do ##class(BeyondCode.PaymentGatewaySimulator).Reset()
     set sc = ##class(BeyondCode.PaymentRecord).%DeleteExtent()
     quit:$$$ISERR(sc) sc
     quit ##class(BeyondCode.OrderRecord).%DeleteExtent()
@@ -125,6 +174,7 @@ ClassMethod PaymentJSON(pPayment As BeyondCode.PaymentRecord) As %DynamicObject 
     set result.id = pPayment.%Id()
     set result.order_id = pPayment.Order.%Id()
     set result.amount = pPayment.Amount
+    set result.attempt_key = pPayment.AttemptKey
     set result.status = pPayment.Status
     set result.provider_payment_id = pPayment.ProviderPaymentId
     quit result
