@@ -1,18 +1,14 @@
 # Business
 
-This file is the central living description of the business. Update it only when new durable understanding emerges.
+This project describes the payment part of a small online store.
 
 ## What the business does
 
-<!-- Briefly describe the business activity and the boundaries of the area covered here. -->
-
-Not documented yet.
+The store accepts customer orders and collects payment for them. The current scope begins when an order is created and ends when the store knows that payment succeeded.
 
 ## Value
 
-<!-- What value does a customer or another participant receive? -->
-
-Not documented yet.
+A customer can pay for an order, while the store receives confirmation from a payment provider before treating that order as paid.
 
 ## Participants
 
@@ -20,33 +16,37 @@ Not documented yet.
 
 | Participant | Role | Goal or responsibility |
 |---|---|---|
-| Not identified yet | — | — |
+| Customer | Creates an order and asks to pay | Complete payment for the order |
+| Store | Records orders and their payment state | Know whether an order has been paid |
+| Payment provider | Accepts payment and confirms its outcome | Tell the store that payment succeeded |
 
 ## Processes
 
-<!-- Describe the main processes from trigger to outcome. -->
-
 | Process | Trigger | Outcome | Participants |
 |---|---|---|---|
-| Not identified yet | — | — | — |
+| Order payment | A customer creates an order and requests payment | The provider confirms success and the order becomes paid | Customer, store, payment provider |
 
 ## Rules and constraints
 
-<!-- Add only durable business rules and significant constraints. -->
-
-- Not documented yet.
+- A new order awaits payment.
+- An order becomes paid only after the payment provider confirms success.
+- The store must not intentionally start another payment for an order it already knows is paid.
+- Each order has one amount; currency handling is outside the current scope.
 
 ## Terms
 
 | Term | Meaning |
 |---|---|
-| Not identified yet | — |
+| Order | A customer's request to buy goods for a recorded amount |
+| Payment | The provider-facing attempt to collect an order's amount |
+| Payment confirmation | The provider's statement that a payment succeeded |
+| Pending payment | The order has not yet received a successful payment confirmation |
+| Paid | The store has received a successful payment confirmation for the order |
 
 ## Open questions
 
-<!-- Keep only important unknowns or contradictions here. Do not present them as facts. -->
-
-- None yet.
+- Which currency will the store use?
+- What should happen when payment does not follow the normal successful sequence?
 
 ## Related knowledge
 
