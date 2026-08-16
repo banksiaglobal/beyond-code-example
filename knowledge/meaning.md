@@ -26,11 +26,14 @@ This file describes why parts of the system exist, what value they support, and 
 | Represent money as positive integer cents | Keeps the baseline amount exact and easy to read | Fractional and non-positive amounts are rejected |
 | Use native IRIS persistent records | Keeps the example focused on the business flow in its intended runtime | Orders and payments are separate IRIS records |
 | Keep only `pending_payment` and `paid` order states | They are the only states required by the current scope | Other provider outcomes have no claimed meaning yet |
-| Use only the gateway's normal behaviour | The first release establishes a happy-path baseline | Failures and unusual event sequences remain outside current knowledge |
+| Keep simulator behaviour limited to investigated scenarios | The source should expose knowledge as it emerges, without speculative safeguards | Only `normal` and `timeout_after_acceptance` are represented |
+| Treat a timeout as a caller observation, not a provider outcome | A provider may execute an operation before its response becomes unusable | The store cannot infer rejection or non-execution from timeout alone |
+| Keep store-observed and provider-side outcomes distinct | Local response and persistence can differ from the provider's ledger | Investigation must compare both sides before drawing a payment conclusion |
 
 ## Unknowns and contradictions
 
 - The business response to unsuccessful or unusual provider behaviour is not yet known.
+- No retry policy or invariant relating orders, attempts, accepted charges, and successful charges has been confirmed.
 
 ## Related documents
 

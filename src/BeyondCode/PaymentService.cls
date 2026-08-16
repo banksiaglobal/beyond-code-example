@@ -47,6 +47,11 @@ ClassMethod PayOrder(pOrderId, Output pResult As %DynamicObject, Output pError A
     }
 
     set charge = ##class(BeyondCode.PaymentGatewaySimulator).RequestCharge(order.%Id(), order.Amount)
+    if charge.status = "timeout" {
+        set pError = charge.error
+        quit 0
+    }
+
     set payment = ##class(BeyondCode.PaymentRecord).%New()
     set payment.Order = order
     set payment.Amount = order.Amount
