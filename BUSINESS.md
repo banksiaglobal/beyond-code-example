@@ -29,6 +29,8 @@ A customer can pay for an order, while the store receives confirmation from a pa
 ## Rules and constraints
 
 - A new order awaits payment.
+- An order may involve more than one payment attempt.
+- The store must not treat more than one payment as successfully completing the same order.
 - An order becomes paid only after the payment provider confirms success.
 - The store must not intentionally start another payment for an order it already knows is paid.
 - Each order has one amount; currency handling is outside the current scope.
@@ -38,18 +40,24 @@ A customer can pay for an order, while the store receives confirmation from a pa
 | Term | Meaning |
 |---|---|
 | Order | A customer's request to buy goods for a recorded amount |
-| Payment | The provider-facing attempt to collect an order's amount |
+| Payment attempt | One effort to pay an order; several attempts may legitimately occur |
+| Provider-side charge | A charge request recorded by the payment provider |
+| Accepted provider charge | A provider-side charge the provider accepted, whether or not the store received a usable response |
+| Successful payment | The financial outcome that completes payment for an order; at most one may complete the same order |
 | Payment confirmation | The provider's statement that a payment succeeded |
+| Store-observed timeout | The store did not receive a usable response; the provider outcome remains unknown |
 | Pending payment | The order has not yet received a successful payment confirmation |
 | Paid | The store has received a successful payment confirmation for the order |
 
 ## Open questions
 
 - Which currency will the store use?
-- What should happen when payment does not follow the normal successful sequence?
+- Who decides whether another payment attempt is appropriate after an ambiguous provider response?
 
 ## Related knowledge
 
-- [System structure](knowledge/structure.md)
-- [Meaning and business rules](knowledge/meaning.md)
-- [Evidence and verification](knowledge/evidence.md)
+- [System map](knowledge/structure/system-map.md)
+- [Order lifecycle](knowledge/structure/order-lifecycle.md)
+- [Payment integration](knowledge/structure/payment-integration.md)
+- [Business rules](knowledge/meaning/business-rules.md)
+- [Evidence and verification](knowledge/evidence/verification.md)
