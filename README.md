@@ -32,9 +32,11 @@ Task discussion
 
 Knowledge is represented in three simple forms:
 
-- **Structure** — what exists in the system and how it is connected. Stored in [`knowledge/structure.md`](knowledge/structure.md).
-- **Meaning** — why it exists and which business rules it implements. Stored in [`knowledge/meaning.md`](knowledge/meaning.md).
-- **Evidence** — what the knowledge is based on and where it was verified. Stored in [`knowledge/evidence.md`](knowledge/evidence.md).
+- **Structure** — what exists in the system and how it is connected. Stored under [`knowledge/structure/`](knowledge/structure/).
+- **Meaning** — why it exists and which business rules it implements. Stored under [`knowledge/meaning/`](knowledge/meaning/).
+- **Evidence** — what the knowledge is based on and where it was verified. Stored under [`knowledge/evidence/`](knowledge/evidence/).
+
+Structure, Meaning, and Evidence are three representations of knowledge. A small project may keep one file for each; as knowledge grows, each representation may contain several focused files.
 
 [`tasks/TASK-TEMPLATE.md`](tasks/TASK-TEMPLATE.md) provides a concise record of a substantial task. [`AGENTS.md`](AGENTS.md) tells Codex how to work with this knowledge.
 

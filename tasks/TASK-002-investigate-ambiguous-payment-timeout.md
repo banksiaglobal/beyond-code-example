@@ -27,9 +27,9 @@ Added a transparent provider-side ledger and `timeout_after_acceptance` behaviou
 
 ## Knowledge Delta
 
-- Recorded that caller-observed timeout and provider-side execution are independent facts in `knowledge/meaning.md`.
-- Preserved the source evidence, weakened initial hypothesis, and runtime boundary in `knowledge/evidence.md`.
-- Added the provider-side ledger to `knowledge/structure.md` and the investigation narrative to `incidents/INC-001-ambiguous-payment-timeout.md`.
+- Recorded that caller-observed timeout and provider-side execution are independent facts; after the Example 03 reclassification this is captured in `knowledge/structure/payment-integration.md`.
+- Preserved the source evidence, weakened initial hypothesis, and runtime boundary; these are now organised under `knowledge/evidence/`.
+- Added the provider-side ledger to the Structure representation and the investigation narrative to `incidents/INC-001-ambiguous-payment-timeout.md`.
 
 ## Verification
 
@@ -49,9 +49,9 @@ Added a transparent provider-side ledger and `timeout_after_acceptance` behaviou
 ## Related material
 
 - [Incident record](../incidents/INC-001-ambiguous-payment-timeout.md)
-- [System structure](../knowledge/structure.md)
-- [Meaning and rules](../knowledge/meaning.md)
-- [Evidence](../knowledge/evidence.md)
+- [Payment integration](../knowledge/structure/payment-integration.md)
+- [Business rules](../knowledge/meaning/business-rules.md)
+- [Incident evidence](../knowledge/evidence/incidents.md)
 
 ## Open questions
 

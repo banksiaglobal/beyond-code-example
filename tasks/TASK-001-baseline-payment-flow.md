@@ -28,7 +28,7 @@ Added a compact IRIS source baseline: REST routes, native persistent records, a 
 ## Knowledge Delta
 
 - Defined the customer, store, and payment provider roles and the baseline order-payment process in `BUSINESS.md`.
-- Recorded system connections in `knowledge/structure.md`, behaviour meaning in `knowledge/meaning.md`, and the verified boundary in `knowledge/evidence.md`.
+- Recorded system connections in the Structure representation, behaviour meaning in Meaning, and the verification boundary in Evidence. These are now organised under `knowledge/structure/`, `knowledge/meaning/`, and `knowledge/evidence/`.
 
 ## Verification
 
@@ -47,9 +47,9 @@ Added a compact IRIS source baseline: REST routes, native persistent records, a 
 ## Related material
 
 - [Business description](../BUSINESS.md)
-- [System structure](../knowledge/structure.md)
-- [Meaning and rules](../knowledge/meaning.md)
-- [Evidence](../knowledge/evidence.md)
+- [System map](../knowledge/structure/system-map.md)
+- [Business rules](../knowledge/meaning/business-rules.md)
+- [Verification evidence](../knowledge/evidence/verification.md)
 - [Release 0.1.0](../releases/0.1.0.md)
 
 ## Open questions

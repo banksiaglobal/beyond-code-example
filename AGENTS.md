@@ -18,10 +18,12 @@ Do not preserve the full conversation. Preserve only knowledge that can help wit
 ## Where knowledge belongs
 
 - `BUSINESS.md` — the central, coherent, living description of the business.
-- `knowledge/structure.md` — what exists in the system and how its parts are connected.
-- `knowledge/meaning.md` — why parts of the system exist and which rules they implement.
-- `knowledge/evidence.md` — sources, observations, verification, and limitations of conclusions.
+- `knowledge/structure/` — what exists in the system and how its parts are connected.
+- `knowledge/meaning/` — why parts of the system exist and which rules they implement.
+- `knowledge/evidence/` — sources, observations, verification, and limitations of conclusions.
 - `tasks/` — concise records of substantial tasks based on `tasks/TASK-TEMPLATE.md`.
+
+Structure, Meaning, and Evidence are knowledge representations, not mandatory single files. Use as many focused files as the project needs within those three directories, choose the most relevant file for each fact, and avoid duplication.
 
 ## Update rules
 

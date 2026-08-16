@@ -34,9 +34,9 @@ What remains unverified, intentionally unchanged, deferred, or dependent on a hu
 ## Durable knowledge updates
 
 - [ ] `BUSINESS.md`
-- [ ] `knowledge/structure.md`
-- [ ] `knowledge/meaning.md`
-- [ ] `knowledge/evidence.md`
+- [ ] Structure knowledge
+- [ ] Meaning knowledge
+- [ ] Evidence knowledge
 - [ ] Durable knowledge did not change
 
 Check only the files that were actually updated.
