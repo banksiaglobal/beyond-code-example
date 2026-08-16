@@ -29,3 +29,13 @@ Verification in one environment does not prove behavior in another. When relevan
 - **Conclusion:** The change establishes the IRIS source baseline and its associated durable knowledge. Runtime behaviour is not claimed as verified.
 - **Limitations:** Only normal payment-provider behaviour is in scope. Timeouts, retries, delayed events, duplicate events, and out-of-order events have not been tested or claimed to be safe.
 - **Related knowledge:** [Business rules](../BUSINESS.md#rules-and-constraints), [system flow](structure.md#flows-and-interactions), and [behaviour meaning](meaning.md#business-rules).
+
+### 2026-08-16 — ambiguous payment timeout investigation
+
+- **Question:** Does duplicate-payment risk require an explicit double click, or can an ordinary retry after a timeout create it?
+- **Source or verification:** Source inspection of the simulator and payment service, plus the written incident reproduction test in `tests/BeyondCode/DuplicatePaymentIncidentTest.cls`.
+- **Context or environment:** Source review in the LOCAL checkout; the ObjectScript was not compiled and the test was not executed.
+- **Observation:** The simulator source records a provider-side accepted charge before returning `timeout_after_acceptance`. Because the store receives no usable charge response, it creates no local payment record for that attempt. A later normal retry records a second provider-side charge and one successful local payment record.
+- **Conclusion:** The initial hypothesis that duplicate payment requires an explicit double click is weakened. A retry after an ambiguous timeout is sufficient to create two provider-side charge requests for one order. Caller-observed timeout does not establish the provider-side outcome.
+- **Limitations:** This is source-level evidence, not a runtime observation. It shows provider-side charge records, not proof that the customer was charged twice. No retry policy, idempotency mechanism, or final business invariant has been verified.
+- **Related knowledge:** [Incident record](../incidents/INC-001-ambiguous-payment-timeout.md), [provider-side ledger](structure.md#main-parts), and [timeout meaning](meaning.md#important-decisions).

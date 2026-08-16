@@ -14,7 +14,8 @@ The demo contains an IRIS REST application, persistent order and payment records
 | Payment service | Applies the baseline order-payment rules | Uses both persistent record types and the gateway simulator |
 | Order storage | Persists order amount and status | Updated by order creation and successful confirmation processing |
 | Payment storage | Persists payment attempts separately from orders | Links each payment to an order and to a provider payment identifier |
-| Payment gateway simulator | Accepts a charge and produces one successful confirmation | Called during payment initiation; returns a confirmation to the application |
+| Payment gateway simulator | Accepts a charge and normally produces one successful confirmation | Called during payment initiation; records provider-side charges before returning a response |
+| Provider-side ledger | Makes the simulator's accepted charges inspectable | Stores provider payment ID, order ID, amount, and provider-side status independently of local payment storage |
 | Payment confirmation boundary | Applies a provider success confirmation | Updates the matching payment and its order |
 
 ## Flows and interactions
@@ -22,8 +23,10 @@ The demo contains an IRIS REST application, persistent order and payment records
 1. The application creates a `pending_payment` order in order storage.
 2. Payment initiation sends the order amount to the local gateway simulator.
 3. The accepted payment is recorded separately and linked to the order.
-4. The simulator's successful confirmation crosses the same processing boundary exposed by the payment webhook.
+4. In normal behaviour, the simulator's successful confirmation crosses the same processing boundary exposed by the payment webhook.
 5. Confirmation processing marks the payment successful and the linked order paid.
+
+For `timeout_after_acceptance`, the simulator records an accepted provider-side charge but returns no usable charge response. The store therefore keeps the order pending and creates no local payment record for that attempt. A later retry can create another provider-side charge.
 
 ## External dependencies
 
@@ -33,7 +36,7 @@ The demo contains an IRIS REST application, persistent order and payment records
 
 ## Unknowns and contradictions
 
-- Behaviour outside the simulator's normal successful sequence is not defined or verified.
+- The policy for retrying after an ambiguous timeout and the relationship between payment attempts and accepted provider charges remain undefined.
 
 ## Related documents
 
